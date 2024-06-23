@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class HousepointsapiApplication {
 
 	public static void main(String[] args) {
+		SystemPropertiesLoader.loadProperties();
 		SpringApplication.run(HousepointsapiApplication.class, args);
 	}
 
