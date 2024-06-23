@@ -1,47 +1,82 @@
 package com.housepoints.housepointsapi;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+@Data
+@Builder
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "/api/v1/users")
+public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String firstName;
-    private String lastName;
-    private String emailAddress;
+    private String name;
+    private String email;
+    private String password;
 
-    public Long getId() {
-        return id;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public User() {
+
     }
 
-    public void setId(Long id) {
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
+
+    public User(Long id, String name, String email, String password, Role role) {
         this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
-    public String getFirstName() {
-        return firstName;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public String getLastName() {
-        return lastName;
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getEmailAddress() {
-        return emailAddress;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }
